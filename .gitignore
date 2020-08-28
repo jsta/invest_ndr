@@ -1,3 +1,6 @@
 data/NDR
 data/Annual_Water_Yield/
 workspace
+.Rproj.user
+.Rhistory
+invest_ndr.Rproj
