@@ -1,6 +1,8 @@
 source("scripts/99_utils.R")
 
-data_dir <- "data/NDR/"
+library(reticulate)
+use_condaenv(condaenv = "env", required = TRUE)
+ndr <- import("natcap.invest.ndr.ndr")
 
 args <- dict(
   "workspace_dir" = "workspace",
@@ -19,3 +21,4 @@ args <- dict(
 
 # system("make clean")
 ndr$execute(args)
+# dir("workspace")
