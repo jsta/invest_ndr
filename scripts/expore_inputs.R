@@ -50,8 +50,11 @@ all(cellStats(dt$sub_load_p, "range") == 0)
 all.equal(dt_values$p_export,
           (dt_values$surface_load_p * dt_values$ndr_p))
 
-# surface loading is a function of entries in the biophys_table
+# surface loading is solely a function of biophys_table$load_p and raster res
 (biophys_values <- dplyr::filter(biophys_table, lucode == dt_values$lulc))
 cell_area_ha <- (res(dt$lulc)[1] * res(dt$lulc)[2]) * 0.0001 # m to ha
-all.equal((biophys_values$load_p * cell_area_ha), as.numeric(dt_values$load_p),
-          tolerance = sqrt(.Machine$double.eps) * 3)
+all.equal(
+  (biophys_values$load_p * cell_area_ha),
+  as.numeric(dt_values$load_p),
+  tolerance = sqrt(.Machine$double.eps) * 3
+  )
