@@ -38,27 +38,20 @@ sf_point <- st_as_sf(st_sfc(
   crs = raster::projection(dt$flow_accumulation)
   ))
 
-mapview(dt$flow_accumulation == 1, maxpixels = 1169217) +
-  mapview(sf_point)
+# mapview(dt$flow_accumulation == 1, maxpixels = 1169217) +
+#   mapview(sf_point)
 
-?whiches.min()
-
-# sf_point <- sf::st_point_on_surface(watersheds)
-# mapview(watersheds) + mapview(sf_point)
 dt_values <- get_values_from_rasters(sf_point, dt)
+
+# the P model has no subsurface loading
+all(cellStats(dt$sub_load_p, "range") == 0)
 
 # export is equal to load * delivery ratio
 all.equal(dt_values$p_export,
-          (dt_values$surface_load_p * dt_values$ndr_p) +
-            (dt_values$sub_load_p * dt_values$sub_ndr_p))
+          (dt_values$surface_load_p * dt_values$ndr_p))
 
 # surface loading is a function of entries in the biophys_table
 (biophys_values <- dplyr::filter(biophys_table, lucode == dt_values$lulc))
-
-
-plot(dt$lulc)
-plot(dt$surface_load_p)
-
-dt_values$surface_load_p
-dt_values$load_p
-dt_values$lulc
+cell_area_ha <- (res(dt$lulc)[1] * res(dt$lulc)[2]) * 0.0001 # m to ha
+all.equal((biophys_values$load_p * cell_area_ha), as.numeric(dt_values$load_p),
+          tolerance = sqrt(.Machine$double.eps) * 3)
